@@ -37,6 +37,11 @@ const jobSchema = new mongoose.Schema({
     required: [true, "File is required"],
     get: linkUrl,
   },
+  completefile: {
+    type: String,
+    default : "",
+    get: linkUrl,
+  },
   skillsRequired: {
     type: String,
     required: [true, "Skills Required is required"],

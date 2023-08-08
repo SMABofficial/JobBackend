@@ -11,11 +11,10 @@ const upload = multer({ dest: 'uploads/' })
 const cors = require("cors");
 const bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
-const privateKey = "khkhj&^5234234((*23423";
 const authCheck = require("./middlewares/authCheck");
-const port = process.env.PORT || 3003;
-const dbURL = process.env.DB_URL || "mongodb://localhost:27017/experts";
-
+const port = process.env.PORT 
+const privateKey = process.env.PRIVATE_JWT 
+const dbURL = process.env.DB_URL 
 app.use(
   cors({
     origin: "*",
@@ -475,6 +474,66 @@ app.post("/add-proposal", upload.single('file'), async (request, response) => {
     }
   }
 })
+app.put("/proposal/:id", async (request, response) => {
+  const id = request.params.id;
+  const updateData = request.body; // Assuming the updated data is sent in the request body
+
+  try {
+    const updatedProposal = await ProposalModel.findByIdAndUpdate(
+      id,
+      updateData,
+      { new: true } // This option returns the updated document
+    )
+    .populate("user")
+    .populate("job")
+    .exec();
+
+    if (!updatedProposal) {
+      return response.json({
+        status: false,
+        message: "Proposal not found"
+      });
+    }
+
+    return response.json({
+      status: true,
+      proposal: updatedProposal
+    });
+  } catch (error) {
+    return response.json({
+      status: false,
+      message: "Something went wrong"
+    });
+  }
+});
+
+app.get("/job-proposal/:jobId", async (request, response) => {
+  try {
+    const jobId = request.params.jobId;
+
+    const proposals = await ProposalModel.find({ job: jobId })
+      .populate("user")
+      .populate("job")
+      .exec();
+
+    if (proposals.length === 0) {
+      return response.json({
+        status: false,
+        msg: "Proposals not found for the given job ID"
+      });
+    }
+
+    return response.json({
+      status: true,
+      proposals: proposals
+    });
+  } catch (error) {
+    return response.json({
+      status: false,
+      msg: "Error fetching proposals"
+    });
+  }
+});
 
 
 /////Get proposal By ID///
@@ -703,6 +762,48 @@ app.get("/jobs", async (request, response) => {
   }
 })
 //////////////// GET ALL JOBS END ////////////////
+app.put("/update-job/:id", upload.single('completefile'), async (request, response) => {
+  try {
+    const jobId = request.params.id;
+    const { completeDescription } = request.body;
+
+    const updatedFields = {};
+
+    if (completeDescription) {
+      updatedFields.completeDescription = completeDescription;
+    }
+
+    let ext = request.file.mimetype.split("/")[1];
+    const NewImgName = request.file.path + "." + ext;
+    request.body.file = NewImgName;
+    fs.rename(request.file.path, NewImgName, () => { console.log("done") });
+
+    const updatedJob = await JobsModels.findByIdAndUpdate(
+      jobId,
+      updatedFields,
+      { new: true }
+    )
+    .populate('user')
+    .exec();
+
+    if (!updatedJob) {
+      return response.json({
+        status: false,
+        message: 'Job not found'
+      });
+    }
+
+    return response.json({
+      status: true,
+      job: updatedJob
+    });
+  } catch (error) {
+    return response.json({
+      status: false,
+      message: 'Something went wrong'
+    });
+  }
+});
 
 //////////////// Edit JOB BY ID Start ////////////////
 
