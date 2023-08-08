@@ -10,6 +10,7 @@ const multer = require('multer')
 const upload = multer({ dest: 'uploads/' })
 const cors = require("cors");
 const bcrypt = require('bcrypt');
+
 var jwt = require('jsonwebtoken');
 const authCheck = require("./middlewares/authCheck");
 const port = process.env.PORT 
