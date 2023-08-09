@@ -28,6 +28,10 @@ app.use("/uploads", express.static(path.join(path.resolve(), "uploads")));
 app.use(express.json());
 /////////////////////////////////////////////////   User Model and User APIs     /////////////////////////////////////////////
 //Get All Users
+
+app.get("/test", (req, res) {
+  res.send("working...");
+})
 app.get("/users", async (request, response) => {
   try {
     const users = await UserModels.find();
