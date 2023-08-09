@@ -15,12 +15,19 @@ const authCheck = require("./middlewares/authCheck");
 const port = process.env.PORT 
 const privateKey = process.env.PRIVATE_JWT
 const dbURL = process.env.DB_URL 
-app.use(
-  cors({
-    origin: "*",
-    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-  })
-);
+// app.use(
+//   cors({
+//     origin: "*",
+//     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+//   })
+// );
+const corsConfig = {
+  origin: '',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE']
+}
+app.use(cors(corsConfig))
+app.options("", cors(corsConfig))
 const path = require('path');
 app.use("/uploads", express.static(path.join(path.resolve(), "uploads")));
 // middleware
