@@ -10,11 +10,10 @@ const multer = require('multer')
 const upload = multer({ dest: 'uploads/' })
 const cors = require("cors");
 const bcrypt = require('bcrypt');
-
 var jwt = require('jsonwebtoken');
 const authCheck = require("./middlewares/authCheck");
 const port = process.env.PORT 
-const privateKey = process.env.PRIVATE_JWT 
+const privateKey = process.env.PRIVATE_JWT
 const dbURL = process.env.DB_URL 
 app.use(
   cors({
@@ -28,10 +27,6 @@ app.use("/uploads", express.static(path.join(path.resolve(), "uploads")));
 app.use(express.json());
 /////////////////////////////////////////////////   User Model and User APIs     /////////////////////////////////////////////
 //Get All Users
-
-app.get("/test", (req, res) {
-  res.send("working...");
-})
 app.get("/users", async (request, response) => {
   try {
     const users = await UserModels.find();
