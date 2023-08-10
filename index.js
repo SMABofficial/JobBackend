@@ -7,7 +7,7 @@ const UserModels = require("./models/UserModels");
 const ProposalModel = require("./models/ProposalModel")
 const JobsModels = require("./models/JobsModels")
 
-const upload = multer({ dest: 'uploads/' })
+// const upload = multer({ dest: 'uploads/' })
 const cors = require("cors");
 const bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
