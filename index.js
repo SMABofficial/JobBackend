@@ -6,7 +6,7 @@ const fs = require("fs");
 const UserModels = require("./models/UserModels");
 const ProposalModel = require("./models/ProposalModel")
 const JobsModels = require("./models/JobsModels")
-const multer = require('multer')
+
 const upload = multer({ dest: 'uploads/' })
 const cors = require("cors");
 const bcrypt = require('bcrypt');
@@ -15,19 +15,13 @@ const authCheck = require("./middlewares/authCheck");
 const port = process.env.PORT 
 const privateKey = process.env.PRIVATE_JWT
 const dbURL = process.env.DB_URL 
-// app.use(
-//   cors({
-//     origin: "*",
-//     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-//   })
-// );
-const corsConfig = {
-  origin: '',
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE']
-}
-app.use(cors(corsConfig))
-app.options("", cors(corsConfig))
+app.use(
+  cors({
+    origin: "*",
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+  })
+);
+
 const path = require('path');
 app.use("/uploads", express.static(path.join(path.resolve(), "uploads")));
 // middleware
