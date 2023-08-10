@@ -44,74 +44,74 @@ app.get("/api/users", async (request, response) => {
   //End Get All Users//
   
   // /  SignUp///
-  app.post("/api/signup", upload.single('image'), async (request, response) => {
-    try {
-      const { username, email } = request.body;
+//   app.post("/api/signup", upload.single('image'), async (request, response) => {
+//     try {
+//       const { username, email } = request.body;
   
-      const usernameExist = await UserModels.findOne({ username });
-      const emailExist = await UserModels.findOne({ email });
+//       const usernameExist = await UserModels.findOne({ username });
+//       const emailExist = await UserModels.findOne({ email });
   
-      if (usernameExist && emailExist) {
-        return response.json({
-          status: false,
-          message: "Username and email are already registered"
-        });
-      } else if (usernameExist) {
-        return response.json({
-          status: false,
-          message: "Username is already registered"
-        });
-      } else if (emailExist) {
-        return response.json({
-          status: false,
-          message: "Email is already registered"
-        });
-      }
+//       if (usernameExist && emailExist) {
+//         return response.json({
+//           status: false,
+//           message: "Username and email are already registered"
+//         });
+//       } else if (usernameExist) {
+//         return response.json({
+//           status: false,
+//           message: "Username is already registered"
+//         });
+//       } else if (emailExist) {
+//         return response.json({
+//           status: false,
+//           message: "Email is already registered"
+//         });
+//       }
   
-      // Generate hashed password
-      request.body.password = await bcrypt.hash(request.body.password, 10);
+//       // Generate hashed password
+//       request.body.password = await bcrypt.hash(request.body.password, 10);
   
-      // Image System
-      if (request.file) {
-        if (
-          request.file.mimetype == "image/png" ||
-          request.file.mimetype == "image/jpg" ||
-          request.file.mimetype == "image/jpeg"
-        ) {
-          let ext = request.file.mimetype.split("/api/")[1];
-          if (ext == "plain") {
-            ext = "txt";
-          }
-          const newImgName = request.file.path + "." + ext;
-          request.body.image = newImgName;
-          fs.rename(request.file.path, newImgName, () => {
-            console.log("done");
-          });
-        } else {
-          fs.unlink(request.file.path, () => {
-            console.log("deleted");
-          });
-        }
-      }
+//       // Image System
+//       if (request.file) {
+//         if (
+//           request.file.mimetype == "image/png" ||
+//           request.file.mimetype == "image/jpg" ||
+//           request.file.mimetype == "image/jpeg"
+//         ) {
+//           let ext = request.file.mimetype.split("/api/")[1];
+//           if (ext == "plain") {
+//             ext = "txt";
+//           }
+//           const newImgName = request.file.path + "." + ext;
+//           request.body.image = newImgName;
+//           fs.rename(request.file.path, newImgName, () => {
+//             console.log("done");
+//           });
+//         } else {
+//           fs.unlink(request.file.path, () => {
+//             console.log("deleted");
+//           });
+//         }
+//       }
   
-      // Adding Process
-      await UserModels.create(request.body);
-      return response.json({
-        status: true
-      });
-    } catch (error) {
-      if (error.name === "ValidationError") {
-        let errors = {};
-        Object.keys(error.errors).forEach((key) => {
-          errors[key] = error.errors[key].message;
-        });
-        return response.json({
-          status: false,
-          errors: errors
-        });
-      }
-    }
-  });
+//       // Adding Process
+//       await UserModels.create(request.body);
+//       return response.json({
+//         status: true
+//       });
+//     } catch (error) {
+//       if (error.name === "ValidationError") {
+//         let errors = {};
+//         Object.keys(error.errors).forEach((key) => {
+//           errors[key] = error.errors[key].message;
+//         });
+//         return response.json({
+//           status: false,
+//           errors: errors
+//         });
+//       }
+//     }
+//   });
   
   ///Login Start //////
   app.post("/api/login", async (request, response) => {
@@ -221,113 +221,113 @@ app.get("/api/user/:id", async (request, response) => {
   
   ///////////////////////////////////////////////    update PROFILE image by user ID START    /////////////////////////////////
   
-  app.put("/api/update-profile-image/:id", upload.single('profile_image'), async (request, response) => {
-    try {
-      const userId = request.params.id;
-      const user = await UserModels.findById(userId);
-      if (!user) {
-        return response.json({
-          status: false,
-          message: "User not found"
-        });
-      }
+//   app.put("/api/update-profile-image/:id", upload.single('profile_image'), async (request, response) => {
+//     try {
+//       const userId = request.params.id;
+//       const user = await UserModels.findById(userId);
+//       if (!user) {
+//         return response.json({
+//           status: false,
+//           message: "User not found"
+//         });
+//       }
   
-      if (request.file) {
-        // Delete the existing profile image if it exists
-        if (user.profile_image) {
-          fs.unlink(user.profile_image, () => { console.log("deleted") });
-        }
+//       if (request.file) {
+//         // Delete the existing profile image if it exists
+//         if (user.profile_image) {
+//           fs.unlink(user.profile_image, () => { console.log("deleted") });
+//         }
   
-        // Process the new profile image
-        if (
-          request.file.mimetype == "image/png" ||
-          request.file.mimetype == "image/jpg" ||
-          request.file.mimetype == "image/jpeg"
-        ) {
-          let ext = request.file.mimetype.split("/api/")[1];
-          if (ext == "plain") { ext = "txt"; }
-          const newImgName = request.file.path + "." + ext;
-          fs.rename(request.file.path, newImgName, () => { console.log("done") });
-          user.profile_image = newImgName;
-        } else {
-          fs.unlink(request.file.path, () => { console.log("deleted") });
-        }
+//         // Process the new profile image
+//         if (
+//           request.file.mimetype == "image/png" ||
+//           request.file.mimetype == "image/jpg" ||
+//           request.file.mimetype == "image/jpeg"
+//         ) {
+//           let ext = request.file.mimetype.split("/api/")[1];
+//           if (ext == "plain") { ext = "txt"; }
+//           const newImgName = request.file.path + "." + ext;
+//           fs.rename(request.file.path, newImgName, () => { console.log("done") });
+//           user.profile_image = newImgName;
+//         } else {
+//           fs.unlink(request.file.path, () => { console.log("deleted") });
+//         }
   
-        // Save the updated user's profile image
-        await user.save();
+//         // Save the updated user's profile image
+//         await user.save();
   
-        return response.json({
-          status: true,
-          message: "Profile image updated successfully"
-        });
-      } else {
-        return response.json({
-          status: false,
-          message: "No profile image file provided"
-        });
-      }
-    } catch (error) {
-      return response.json({
-        status: false,
-        message: "Something went wrong"
-      });
-    }
-  });
+//         return response.json({
+//           status: true,
+//           message: "Profile image updated successfully"
+//         });
+//       } else {
+//         return response.json({
+//           status: false,
+//           message: "No profile image file provided"
+//         });
+//       }
+//     } catch (error) {
+//       return response.json({
+//         status: false,
+//         message: "Something went wrong"
+//       });
+//     }
+//   });
   ///////////////////////////////////////////////    UPDATE PROFILE IMAGE BY user ID END    /////////////////////////////////
   
   ///////////////////////////////////////////////    UPDATE COVER IMAGE BY user ID START    /////////////////////////////////
-  app.put("/api/update-cover-image/:id", upload.single('cover_image'), async (request, response) => {
-    try {
-      const userId = request.params.id;
-      const user = await UserModels.findById(userId);
-      if (!user) {
-        return response.json({
-          status: false,
-          message: "User not found"
-        });
-      }
+//   app.put("/api/update-cover-image/:id", upload.single('cover_image'), async (request, response) => {
+//     try {
+//       const userId = request.params.id;
+//       const user = await UserModels.findById(userId);
+//       if (!user) {
+//         return response.json({
+//           status: false,
+//           message: "User not found"
+//         });
+//       }
   
-      if (request.file) {
-        // Delete the existing cover image if it exists
-        if (user.cover_image) {
-          fs.unlink(user.cover_image, () => { console.log("deleted") });
-        }
+//       if (request.file) {
+//         // Delete the existing cover image if it exists
+//         if (user.cover_image) {
+//           fs.unlink(user.cover_image, () => { console.log("deleted") });
+//         }
   
-        // Process the new cover image
-        if (
-          request.file.mimetype == "image/png" ||
-          request.file.mimetype == "image/jpg" ||
-          request.file.mimetype == "image/jpeg"
-        ) {
-          let ext = request.file.mimetype.split("/api/")[1];
-          if (ext == "plain") { ext = "txt"; }
-          const newImgName = request.file.path + "." + ext;
-          fs.rename(request.file.path, newImgName, () => { console.log("done") });
-          user.cover_image = newImgName;
-        } else {
-          fs.unlink(request.file.path, () => { console.log("deleted") });
-        }
+//         // Process the new cover image
+//         if (
+//           request.file.mimetype == "image/png" ||
+//           request.file.mimetype == "image/jpg" ||
+//           request.file.mimetype == "image/jpeg"
+//         ) {
+//           let ext = request.file.mimetype.split("/api/")[1];
+//           if (ext == "plain") { ext = "txt"; }
+//           const newImgName = request.file.path + "." + ext;
+//           fs.rename(request.file.path, newImgName, () => { console.log("done") });
+//           user.cover_image = newImgName;
+//         } else {
+//           fs.unlink(request.file.path, () => { console.log("deleted") });
+//         }
   
-        // Save the updated user's cover image
-        await user.save();
+//         // Save the updated user's cover image
+//         await user.save();
   
-        return response.json({
-          status: true,
-          message: "Cover image updated successfully"
-        });
-      } else {
-        return response.json({
-          status: false,
-          message: "No cover image file provided"
-        });
-      }
-    } catch (error) {
-      return response.json({
-        status: false,
-        message: "Something went wrong"
-      });
-    }
-  });
+//         return response.json({
+//           status: true,
+//           message: "Cover image updated successfully"
+//         });
+//       } else {
+//         return response.json({
+//           status: false,
+//           message: "No cover image file provided"
+//         });
+//       }
+//     } catch (error) {
+//       return response.json({
+//         status: false,
+//         message: "Something went wrong"
+//       });
+//     }
+//   });
   ///////////////////////////////////////////////    UPDATE COVER IMAGE BY user ID END    /////////////////////////////////
   
   ///////////////////////////////////////////////    UPDATE USER PASSWORD BY user ID START    /////////////////////////////////
@@ -445,35 +445,35 @@ app.get("/api/user/:id", async (request, response) => {
   //End Get All Users//
   
   // /  SignUp///
-  app.post("/api/add-proposal", upload.single('file'), async (request, response) => {
+//   app.post("/api/add-proposal", upload.single('file'), async (request, response) => {
   
-    try {
-          let ext = request.file.mimetype.split("/api/")[1];
-          const NewImgName = request.file.path + "." + ext;
-          request.body.file = NewImgName;
-          fs.rename(request.file.path, NewImgName, () => { console.log("done") });
-        ////Adding Process//
-        await ProposalModel.create(request.body);
-        return response.json({
-          "status": true
-        });
+//     try {
+//           let ext = request.file.mimetype.split("/api/")[1];
+//           const NewImgName = request.file.path + "." + ext;
+//           request.body.file = NewImgName;
+//           fs.rename(request.file.path, NewImgName, () => { console.log("done") });
+//         ////Adding Process//
+//         await ProposalModel.create(request.body);
+//         return response.json({
+//           "status": true
+//         });
       
   
-    } catch (error) {
-      if (error.name === "ValidationError") {
-        let errors = {};
+//     } catch (error) {
+//       if (error.name === "ValidationError") {
+//         let errors = {};
   
-        Object.keys(error.errors).forEach((key) => {
-          errors[key] = error.errors[key].message;
-        });
+//         Object.keys(error.errors).forEach((key) => {
+//           errors[key] = error.errors[key].message;
+//         });
   
-        return response.json({
-          "status": false,
-          errors: errors
-        })
-      }
-    }
-  })
+//         return response.json({
+//           "status": false,
+//           errors: errors
+//         })
+//       }
+//     }
+//   })
   app.put("/api/proposal/:id", async (request, response) => {
     const id = request.params.id;
     const updateData = request.body; // Assuming the updated data is sent in the request body
@@ -762,48 +762,48 @@ app.get("/api/user/:id", async (request, response) => {
     }
   })
   //////////////// GET ALL JOBS END ////////////////
-  app.put("/api/update-job/:id", upload.single('completefile'), async (request, response) => {
-    try {
-      const jobId = request.params.id;
-      const { completeDescription } = request.body;
+//   app.put("/api/update-job/:id", upload.single('completefile'), async (request, response) => {
+//     try {
+//       const jobId = request.params.id;
+//       const { completeDescription } = request.body;
   
-      const updatedFields = {};
+//       const updatedFields = {};
   
-      if (completeDescription) {
-        updatedFields.completeDescription = completeDescription;
-      }
+//       if (completeDescription) {
+//         updatedFields.completeDescription = completeDescription;
+//       }
   
-      let ext = request.file.mimetype.split("/api/")[1];
-      const NewImgName = request.file.path + "." + ext;
-      request.body.file = NewImgName;
-      fs.rename(request.file.path, NewImgName, () => { console.log("done") });
+//       let ext = request.file.mimetype.split("/api/")[1];
+//       const NewImgName = request.file.path + "." + ext;
+//       request.body.file = NewImgName;
+//       fs.rename(request.file.path, NewImgName, () => { console.log("done") });
   
-      const updatedJob = await JobsModels.findByIdAndUpdate(
-        jobId,
-        updatedFields,
-        { new: true }
-      )
-      .populate('user')
-      .exec();
+//       const updatedJob = await JobsModels.findByIdAndUpdate(
+//         jobId,
+//         updatedFields,
+//         { new: true }
+//       )
+//       .populate('user')
+//       .exec();
   
-      if (!updatedJob) {
-        return response.json({
-          status: false,
-          message: 'Job not found'
-        });
-      }
+//       if (!updatedJob) {
+//         return response.json({
+//           status: false,
+//           message: 'Job not found'
+//         });
+//       }
   
-      return response.json({
-        status: true,
-        job: updatedJob
-      });
-    } catch (error) {
-      return response.json({
-        status: false,
-        message: 'Something went wrong'
-      });
-    }
-  });
+//       return response.json({
+//         status: true,
+//         job: updatedJob
+//       });
+//     } catch (error) {
+//       return response.json({
+//         status: false,
+//         message: 'Something went wrong'
+//       });
+//     }
+//   });
   
   //////////////// Edit JOB BY ID Start ////////////////
   
@@ -836,33 +836,33 @@ app.get("/api/user/:id", async (request, response) => {
   
   //////////////// edit JOBS END ////////////////
   ////////////////// ADD JOB START /////////////////
-  app.post("/api/create-job", upload.single('file'), async (request, response) => {
+//   app.post("/api/create-job", upload.single('file'), async (request, response) => {
   
-    try {
-          let ext = request.file.mimetype.split("/api/")[1];
-          const NewImgName = request.file.path + "." + ext;
-          request.body.file = NewImgName;
-          fs.rename(request.file.path, NewImgName, () => { console.log("done") });
-        ////Adding Process//
-        await JobsModels.create(request.body);
-        return response.json({
-          "status": true
-        });
+//     try {
+//           let ext = request.file.mimetype.split("/api/")[1];
+//           const NewImgName = request.file.path + "." + ext;
+//           request.body.file = NewImgName;
+//           fs.rename(request.file.path, NewImgName, () => { console.log("done") });
+//         ////Adding Process//
+//         await JobsModels.create(request.body);
+//         return response.json({
+//           "status": true
+//         });
       
   
-    } catch (error) {
-      if (error.name === "ValidationError") {
-        let errors = {};
-        Object.keys(error.errors).forEach((key) => {
-          errors[key] = error.errors[key].message;
-        });
-        return response.json({
-          "status": false,
-          errors: errors
-        })
-      }
-    }
-  })
+//     } catch (error) {
+//       if (error.name === "ValidationError") {
+//         let errors = {};
+//         Object.keys(error.errors).forEach((key) => {
+//           errors[key] = error.errors[key].message;
+//         });
+//         return response.json({
+//           "status": false,
+//           errors: errors
+//         })
+//       }
+//     }
+//   })
   /////////////////// ADD JOB END //////////////////
   
   /////////////////// GET JOB BY ID START ////////////////
